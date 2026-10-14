@@ -1,0 +1,22 @@
+title: Release du LLM non vérifiée au démarrage
+id: fefb4cf8-9809-51c7-b510-80b8be4fb8a6
+status: experimental
+description: >
+  La signature KMS du manifeste ou le SHA-256 d'un artefact (modèle, binaire, politique) ne correspond pas. La pile ne démarre pas.
+references:
+  - https://atlas.mitre.org/techniques/AML.T0010
+author: Gaspard Torterat--Slanda
+date: 2026-10-14
+tags:
+  - atlas.aml.t0010
+logsource:
+  product: agent-gateway
+  service: audit
+detection:
+  selection:
+    event: release_verification_failed
+  condition: selection
+falsepositives:
+  - Rollback volontaire mal fait (seq inférieur), ou pointeur current modifié à la main.
+level: critical
+# Traduction : filtre CloudWatch ReleaseVerificationFailed dans terraform/detection.tf

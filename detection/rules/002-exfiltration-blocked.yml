@@ -1,0 +1,22 @@
+title: Le modèle tente de faire sortir des données
+id: 96d07b7e-bd44-5c5d-9c0e-156fb8c40a27
+status: experimental
+description: >
+  Appel d'outil sortant vers une destination hors liste, secret dans les arguments, sortie après contenu contaminé, ou lien markdown d'exfiltration.
+references:
+  - https://atlas.mitre.org/techniques/AML.T0057
+author: Gaspard Torterat--Slanda
+date: 2026-10-14
+tags:
+  - atlas.aml.t0057
+logsource:
+  product: agent-gateway
+  service: audit
+detection:
+  selection:
+    exfil: true
+  condition: selection
+falsepositives:
+  - Nouvelle destination légitime non encore ajoutée à la politique.
+level: high
+# Traduction : filtre CloudWatch ExfiltrationBlocked dans terraform/detection.tf

@@ -24,7 +24,9 @@ event() { # event <nom> <détail> : une ligne JSON dans le flux « boot »
 }
 fail() { event release_verification_failed "$1"; exit 1; }
 
-ver=$(aws s3 cp "s3://$RELEASE_BUCKET/releases/current" - | tr -d '[:space:]') || fail "pointeur current illisible"
+# Pas encore de release : état normal au premier démarrage, pas une alerte.
+ver=$(aws s3 cp "s3://$RELEASE_BUCKET/releases/current" - 2>/dev/null | tr -d '[:space:]') \
+  || { event release_pending "aucune release publiée"; exit 1; }
 [[ $ver =~ ^[0-9]{8}-[0-9]{6}$ ]] || fail "version invalide : $ver"
 dir="$BASE/releases/$ver"
 mkdir -p "$dir"

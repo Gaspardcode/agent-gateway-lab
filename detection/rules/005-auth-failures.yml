@@ -1,0 +1,22 @@
+title: Échecs d'authentification mTLS répétés
+id: aab96cf8-bc5d-5921-b20d-71a091942876
+status: experimental
+description: >
+  Poignée de main TLS sans certificat valide, ou CN inconnu de la politique. Seuil : 5 en 5 minutes.
+references:
+  - https://atlas.mitre.org/techniques/AML.T0040
+author: Gaspard Torterat--Slanda
+date: 2026-10-14
+tags:
+  - atlas.aml.t0040
+logsource:
+  product: agent-gateway
+  service: audit
+detection:
+  selection:
+    auth_fail: true
+  condition: selection
+falsepositives:
+  - Certificat client expiré (30 jours) : renouveler avec pki.sh client <cn>.
+level: medium
+# Traduction : filtre CloudWatch AuthFailures dans terraform/detection.tf

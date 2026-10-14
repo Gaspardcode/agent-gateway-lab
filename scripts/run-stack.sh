@@ -21,7 +21,8 @@ done
 
 log_opts() {
   if [[ -n ${LOG_GROUP:-} ]]; then
-    echo "--log-driver awslogs --log-opt awslogs-group=$LOG_GROUP --log-opt awslogs-stream=$1"
+    echo "--log-driver awslogs --log-opt awslogs-group=$LOG_GROUP --log-opt awslogs-stream=$1" \
+      "${AWS_REGION:+--log-opt awslogs-region=$AWS_REGION}"
   fi
 }
 

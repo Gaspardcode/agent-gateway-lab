@@ -1,0 +1,44 @@
+#!/bin/bash
+# Installe Docker et le service de démarrage. Aucune logique applicative ici :
+# tout ce qui tourne vient de la release signée, vérifiée par agl-boot.service.
+set -euo pipefail
+
+dnf install -y -q docker jq
+systemctl enable --now docker
+
+install -d -m 0755 /opt/agl/bin
+echo '${verify_release}' | base64 -d > /opt/agl/bin/verify-release.sh
+echo '${run_stack}' | base64 -d > /opt/agl/bin/run-stack.sh
+chmod 0755 /opt/agl/bin/*.sh
+
+cat > /etc/systemd/system/agl-boot.service <<'EOF'
+[Unit]
+Description=Vérifie la release signée puis lance llama.cpp et la passerelle
+After=docker.service network-online.target
+Wants=network-online.target
+Requires=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+Environment=AWS_REGION=${region}
+Environment=AWS_DEFAULT_REGION=${region}
+Environment=RELEASE_BUCKET=${bucket}
+Environment=KMS_KEY=${kms_key}
+Environment=LOG_GROUP=${log_group}
+Environment=SSM_PREFIX=${ssm_prefix}
+Environment=CTX=${ctx}
+ExecStart=/opt/agl/bin/verify-release.sh
+TimeoutStartSec=1200
+Restart=on-failure
+RestartSec=60
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl daemon-reload
+systemctl enable agl-boot.service
+# Au premier démarrage, la release n'est peut-être pas encore publiée : le
+# service réessaie toutes les minutes (Restart=on-failure).
+systemctl start --no-block agl-boot.service

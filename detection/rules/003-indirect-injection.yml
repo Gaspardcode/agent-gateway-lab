@@ -1,0 +1,22 @@
+title: Injection de consignes dans un résultat d'outil
+id: d3492895-bf27-59a2-bd9b-a73a9a7973da
+status: experimental
+description: >
+  Un message role=tool contient un marqueur d'injection ou des caractères Unicode invisibles. La conversation est contaminée : plus aucune sortie autorisée.
+references:
+  - https://atlas.mitre.org/techniques/AML.T0051
+author: Gaspard Torterat--Slanda
+date: 2026-10-14
+tags:
+  - atlas.aml.t0051.001
+logsource:
+  product: agent-gateway
+  service: audit
+detection:
+  selection:
+    tainted: true
+  condition: selection
+falsepositives:
+  - Document légitime contenant une formule proche (« ignorez les instructions précédentes d'installation »). Mesuré par le scénario B04.
+level: medium
+# Traduction : filtre CloudWatch IndirectInjection dans terraform/detection.tf

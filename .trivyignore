@@ -1,0 +1,13 @@
+# Exceptions trivy assumées (voir docs/modele-de-menace.md)
+
+# S3 en SSE-S3 et non SSE-KMS : le bucket ne contient aucun secret (modèle
+# public, binaire, politique) et l'intégrité repose sur la signature KMS du manifeste.
+AVD-AWS-0132
+# SNS chiffré par la clé gérée AWS : les alertes ne contiennent aucune donnée sensible.
+AVD-AWS-0136
+# Sous-réseau public et IP publique : sortie sans NAT Gateway (1 $/jour),
+# aucun port entrant, accès uniquement par SSM.
+AVD-AWS-0164
+AVD-AWS-0009
+# Sortie 443 vers 0.0.0.0/0 : registres d'images publics (ghcr.io, gcr.io), pas de proxy.
+AVD-AWS-0104

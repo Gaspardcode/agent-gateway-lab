@@ -1,0 +1,22 @@
+title: Outil hors du périmètre du client
+id: 3960e67b-9e99-5256-a8ae-7fa66081d137
+status: experimental
+description: >
+  Le client déclare ou le modèle appelle un outil que la politique n'accorde pas à ce CN, ou des arguments illisibles sur un outil sortant.
+references:
+  - https://atlas.mitre.org/techniques/AML.T0053
+author: Gaspard Torterat--Slanda
+date: 2026-10-14
+tags:
+  - atlas.aml.t0053
+logsource:
+  product: agent-gateway
+  service: audit
+detection:
+  selection:
+    tool_violation: true
+  condition: selection
+falsepositives:
+  - Client mal configuré après ajout d'un outil.
+level: high
+# Traduction : filtre CloudWatch ToolViolation dans terraform/detection.tf
