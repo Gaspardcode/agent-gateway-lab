@@ -7,7 +7,7 @@ TF      := terraform -chdir=terraform
 BACKEND ?= $(HOME)/aws-detection-lab/terraform/backend.hcl
 OUT      = $(shell $(TF) output -raw $(1) 2>/dev/null)
 
-.PHONY: test lint init plan apply release publish tls tunnel redteam stop start destroy
+.PHONY: test lint init plan apply release publish tls tunnel redteam stop start destroy status shell logs ask
 
 test:            ## tests Rust (unitaires + bout en bout mTLS), dans Docker
 	docker run --rm -v agw-cargo:/usr/local/cargo/registry -v $(CURDIR)/gateway:/src -w /src rust:1-bookworm cargo test --quiet
@@ -46,6 +46,21 @@ stop:
 	$(AWS) ec2 stop-instances --instance-ids $(call OUT,instance_id) >/dev/null && echo arrêtée
 start:
 	$(AWS) ec2 start-instances --instance-ids $(call OUT,instance_id) >/dev/null && echo démarrée
+
+status:          ## état de l'instance et du service de démarrage
+	@$(AWS) ec2 describe-instances --instance-ids $(call OUT,instance_id) --query 'Reservations[0].Instances[0].State.Name' --output text
+
+shell:           ## shell sur l'instance, par SSM (pas de SSH)
+	PATH=$(dir $(AWS)):$$PATH $(AWS) ssm start-session --target $(call OUT,instance_id)
+
+logs:            ## audit de la passerelle en direct
+	$(AWS) logs tail $(call OUT,log_group) --log-stream-names gateway boot --follow --format short
+
+ask:             ## question rapide : make ask Q="Bonjour" (tunnel ouvert)
+	@curl -s --cacert .pki/ca.crt --cert .pki/agent-support.crt --key .pki/agent-support.key \
+	  https://localhost:8443/v1/chat/completions -H 'content-type: application/json' \
+	  -d "$$(jq -n --arg q "$(Q)" '{messages: [{role: "user", content: $$q}], max_tokens: 300}')" \
+	  | jq -r '.choices[0].message.content // .error.message'
 
 destroy:
 	$(TF) destroy
