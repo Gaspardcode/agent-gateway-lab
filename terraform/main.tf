@@ -90,7 +90,8 @@ resource "aws_vpc_endpoint" "s3" {
 
 resource "aws_security_group" "instance" {
   name        = "${var.project}-instance"
-  description = "Aucun port entrant. Sortie HTTPS uniquement (SSM, S3, KMS, CloudWatch, registres d'images)."
+  # ASCII imposé par l'API EC2 : aucun port entrant, sortie HTTPS uniquement.
+  description = "No ingress. HTTPS egress only (SSM, S3, KMS, CloudWatch, image registries)"
   vpc_id      = aws_vpc.this.id
 
   egress {
