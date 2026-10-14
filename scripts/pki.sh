@@ -9,6 +9,7 @@ set -euo pipefail
 DIR=${PKI_DIR:-"$(dirname "$0")/../.pki"}
 PREFIX=${SSM_PREFIX:-/agl/tls}
 mkdir -p "$DIR" && chmod 700 "$DIR"
+DIR=$(realpath "$DIR")
 cd "$DIR"
 
 leaf() { # leaf <nom> <cn> <eku> [san]
