@@ -62,7 +62,7 @@ make lint test                               # fmt, validate, trivy, tests Rust
 make plan && make apply                      # relire le plan avant apply
 ./scripts/pki.sh init && make tls            # CA + certificats, serveur dans SSM
 make release && git status                   # arbre propre exigé pour publier
-make publish V=<version>                     # signature KMS + envoi S3
+make publish                     # signature KMS + envoi S3
 make tunnel                                  # dans un autre terminal
 make redteam                                 # environ 30 min sur 2 vCPU
 make stop                                    # ou attendre l'arrêt automatique

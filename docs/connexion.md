@@ -134,7 +134,7 @@ Fermer le terminal du tunnel (Ctrl-C).
 | Certificat client expiré (30 jours) | `./scripts/pki.sh client agent-support` |
 | Certificat serveur expiré | `./scripts/pki.sh server && make tls`, puis redémarrer l'instance |
 | Nouveau client | `./scripts/pki.sh client <cn>`, l'ajouter dans `gateway/policy.yaml`, puis nouvelle release |
-| Nouvelle release | commit, `make release`, `make publish V=<version>`, puis `make stop start` |
+| Nouvelle release | commit, `make release`, `make publish`, puis `make stop start` |
 | Tout supprimer | `make destroy` |
 
 ## Dépannage
