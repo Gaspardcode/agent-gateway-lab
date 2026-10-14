@@ -55,8 +55,9 @@ docker create --name agent-gateway --restart unless-stopped \
 docker network connect agl-internal agent-gateway
 docker start agent-gateway >/dev/null
 
+# Le message a changé selon les versions de llama.cpp : on accepte les deux.
 for _ in $(seq 1 120); do
-  if docker logs llama 2>&1 | grep -q "server is listening"; then
+  if docker logs llama 2>&1 | grep -qE "server is listening|listening on http"; then
     echo "pile prête : https://localhost:8443 (mTLS)"
     exit 0
   fi
