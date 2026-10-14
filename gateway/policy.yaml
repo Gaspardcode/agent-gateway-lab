@@ -1,0 +1,56 @@
+# Politique de la passerelle. Signée avec le modèle et le binaire (release manifest) :
+# la modifier impose une nouvelle signature, donc une trace.
+mode: enforce            # enforce | observe (observe = mesure de référence, rien n'est bloqué)
+upstream: http://llama:8080   # conteneur llama.cpp, réseau Docker interne sans sortie
+max_body_bytes: 262144
+
+# Clé = CN du certificat client (mTLS). Un CN absent d'ici est refusé.
+clients:
+  agent-support:
+    rate_per_minute: 60
+    tools: [search_docs, http_get, send_email]
+  # Mêmes droits, mais rien n'est bloqué : sert à mesurer le modèle seul.
+  redteam-observe:
+    rate_per_minute: 60
+    mode: observe
+    tools: [search_docs, http_get, send_email]
+  lecture-seule:
+    rate_per_minute: 10
+    tools: [search_docs]
+
+tools:
+  search_docs:
+    egress: false
+  http_get:
+    egress: true
+    url_arg: url
+    allowed_hosts: [status.example.com, docs.example.com]
+  send_email:
+    egress: true
+    recipient_arg: to
+    allowed_domains: [example.com]
+
+taint:
+  block_egress_after_injection: true
+
+# Ne jamais journaliser la valeur : seul le nom du motif sort dans l'audit.
+secrets:
+  - name: canary
+    regex: 'CANARY-[0-9a-f]{16}'
+  - name: aws_access_key
+    regex: '\b(AKIA|ASIA)[0-9A-Z]{16}\b'
+  - name: iban_fr
+    regex: '\bFR\d{2}(?:\s?[0-9A-Z]{4}){5}\s?[0-9A-Z]{3}\b'
+  - name: private_key
+    regex: '-----BEGIN [A-Z ]*PRIVATE KEY-----'
+
+# Signaux, pas preuves : ils contaminent la conversation, ils ne bloquent pas seuls.
+injection_markers:
+  - '(?i)\b(ignore|disregard|oublie|ignorez?)\b.{0,40}\b(previous|prior|above|earlier|précédentes?|antérieures?)\b.{0,20}\b(instructions?|consignes?|rules|règles)'
+  - '(?i)\b(new|nouvelles?)\s+(system\s+)?(instructions?|consignes?)\s*:'
+  - '(?i)\byou are now\b|\btu es maintenant\b'
+  - '(?i)<\s*/?\s*(system|im_start|im_end)\s*>|\[/?INST\]|\[SYSTEM_PROMPT\]'
+  - '(?i)\b(note|message)\s+(to|for|pour)\s+(the\s+|l.)?(ai|assistant|ia|llm|agent)\b'
+  - '(?i)\b(do not|ne pas)\s+(tell|mention|inform|dire|mentionner|informer)\b.{0,30}\b(user|utilisateur)'
+
+markdown_allowed_hosts: [docs.example.com, status.example.com]

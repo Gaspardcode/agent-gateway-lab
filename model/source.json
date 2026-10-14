@@ -1,0 +1,15 @@
+{
+  "comment": "Modèle épinglé : dépôt officiel mistralai, révision et SHA-256 fixés. Toute autre source est refusée par release.sh.",
+  "repo": "mistralai/Ministral-3-3B-Instruct-2512-GGUF",
+  "revision": "eb599d408350ea2bb60452cb86be7c7b2fc28227",
+  "file": "Ministral-3-3B-Instruct-2512-Q4_K_M.gguf",
+  "size": 2147023008,
+  "sha256": "9ed150d4367e68df0ac8e1540f6ddc65b42d0ee26378329d1ecbca60f93fc5f8",
+  "license": "apache-2.0",
+  "images": {
+    "llama": "ghcr.io/ggml-org/llama.cpp@sha256:6d607629e3dd5e85f45c43d1494648126cb3f93f2122c9cd53f43242c94cde14",
+    "llama_tag": "server-b11277",
+    "gateway_runtime": "gcr.io/distroless/static-debian12@sha256:afa5c872c891853ca7fcf1f12c3edb23f7eeef36189728842dd51042ff57f7ab",
+    "gateway_runtime_tag": "static-debian12:nonroot"
+  }
+}

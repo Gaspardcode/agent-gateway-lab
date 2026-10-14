@@ -1,0 +1,10 @@
+.cache/
+dist/
+.pki/
+gateway/target/
+results/*.json
+terraform/.terraform/
+terraform/*.tfplan
+terraform/*.tfstate*
+terraform/terraform.tfvars
+__pycache__/
